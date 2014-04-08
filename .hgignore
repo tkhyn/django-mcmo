@@ -1,10 +1,7 @@
 syntax: glob
 
 # buildout files and folders
-bin
-buildout/parts
-buildout/dev-eggs
-buildout/local.cfg
+buildout
 .installed.cfg
 
 # distutils generated files and folders
