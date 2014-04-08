@@ -1,7 +1,7 @@
 django-mcmo
 ===========
 
-(c) 2014 Thomas Khyn
+|copyright| 2014 Thomas Khyn
 
 MCMO stands for 'Management Command Multiple Override'
 Allows multiple apps to override the same management command in Django
@@ -13,11 +13,11 @@ Usage
 1. Install using your prefered method
 2. replace the line::
 
-	from django.core import management
+    from django.core import management
 
 by::
 
-	from multiple_mngt_cmd_override import management
+    from django_mcmo import management
 
 in your manage.py file
 
@@ -31,7 +31,7 @@ Alternative usage
 If your manage.py is automatically generated (e.g. if you are using buildout
 and djangorecipe), simply make sure that the statement::
 
-	import multiple_mngt_cmd_override
+    import django_mcmo
 
 is executed before calling django.management.execute_from_command_line.
 
@@ -45,8 +45,9 @@ Limitations
 The same-name overrides must derive from the same Command class, or at least
 from the same Command base class (AppCommand, LabelCommand or NoArgsCommand).
 
-For example, if appA introduces a cmd management command with cmd.Command
-deriving from AppCommand and appB introduces a cmd management command with
-cmd.Command deriving from NoArgsCommand, appB's cmd.Command.handle_no_args will
-never be called, as appA's cmd.Command.handle will be prioritary over
-NoArgsCommand.handle.
+In practice, same-name command will only be met when two apps override a
+core django management command. They will therefore derive from the same
+Command class, and cause no issue (except if the same options are defined in
+the two commands).
+
+.. |copyright| unicode:: 0xA9
