@@ -81,6 +81,6 @@ def read(filename):
 
 setup(**dict(metadata,
    packages=packages,
-   long_description=read('README.txt'),  # use reST in README.txt !
+   long_description=read('README.rst'),  # use reST in README.txt !
    install_requires=install_requires
 ))
