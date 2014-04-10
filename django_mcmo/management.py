@@ -8,7 +8,6 @@ from django.core import management as core_management
 from django.core.exceptions import ImproperlyConfigured
 from django.utils import six
 from django.core.management.color import color_style
-from django.core.management import execute_from_command_line
 
 
 _commands = None
