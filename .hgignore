@@ -3,6 +3,7 @@ syntax: glob
 # buildout files and folders
 buildout
 .installed.cfg
+django_mcmo.egg-info
 
 # distutils generated files and folders
 dist
