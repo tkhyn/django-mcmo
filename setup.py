@@ -19,7 +19,7 @@ if dev_status == 'alpha' and not __version_info__[4]:
 DEV_STATUS = {'pre': '2 - Pre-Alpha',
               'alpha': '3 - Alpha',
               'beta': '4 - Beta',
-              'rc': '5 - Production/Stable',
+              'rc': '4 - Beta',
               'final': '5 - Production/Stable'}
 
 # setup function parameters
@@ -31,7 +31,7 @@ setup(
     long_description=open(os.path.join('README.rst')).read(),
     author='Thomas Khyn',
     author_email='thomas@ksytek.com',
-    url='http://bitbucket.org/tkhyn/django-mcmo',
+    url='https://bitbucket.org/tkhyn/django-mcmo',
     keywords=['django', 'management', 'multiple'],
     classifiers=[
         'Programming Language :: Python',

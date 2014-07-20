@@ -5,7 +5,8 @@ buildout
 .installed.cfg
 django_mcmo.egg-info
 
-# distutils generated files and folders
+# setuptools generated files and folders
+build
 dist
 MANIFEST
 
