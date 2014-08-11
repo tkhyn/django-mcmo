@@ -1,7 +1,7 @@
 syntax: glob
 
-# buildout files and folders
-buildout
+# buildout
+bin
 .installed.cfg
 django_mcmo.egg-info
 
