@@ -46,10 +46,6 @@ setup(
         'Topic :: Utilities'
     ],
     packages=find_packages(),
-    include_package_data=True,
-    package_data={
-        '': ['LICENSE.txt', 'README.rst']
-    },
     install_requires=(
         'django>=1.6',
     ),
