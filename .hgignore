@@ -18,6 +18,9 @@ django-mcmo.egg-info
 .project
 .settings
 
+# tests
+.coverage
+
 # python binary files
 *.pyc
 
