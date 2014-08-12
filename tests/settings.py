@@ -16,8 +16,8 @@ DATABASES = {
     }
 }
 
-INSTALLED_APPS = ('tests',
-                  'django_nose')
+INSTALLED_APPS = ['django_mcmo',
+                  'django_nose']
 
 MIDDLEWARE_CLASSES = ()
 
