@@ -3,6 +3,7 @@ Monkey-patching django.core.management functions
 """
 
 import collections
+from warnings import warn
 
 from django.core import management as core_management
 from django.core.exceptions import ImproperlyConfigured
@@ -47,34 +48,43 @@ core_management.get_commands = get_commands
 
 
 def load_command_class(app_names, name):
-    prev_cmd_class = None
-    for app in app_names:
+    bases = []
+    option_list = []
+    option_list_names = []
+    for app in reversed(app_names):
         module = core_management.import_module('%s.management.commands.%s' % \
                                                (app, name))
-        cmd_class = module.Command
-        # fake inheritance by playing with the __bases__ tuple
-        if prev_cmd_class:
-            bases = list(cmd_class.__bases__)
-            # remove from the bases any class from which the previous Command
-            # derives
-            for b in cmd_class.__bases__:
-                if issubclass(prev_cmd_class, b):
-                    bases.remove(b)
+        # original command class
+        app_cmd_class = module.Command
 
-            # and replace the __bases__ tuple, with the previous Command in
-            # first position
-            cmd_class.__bases__ = (prev_cmd_class,) + tuple(bases)
+        add_cmd_class = True
+        for b in reversed(bases):
+            if issubclass(app_cmd_class, b):
+                # remove any base class of app_cmd_class already in the list
+                bases.remove(b)
+            elif issubclass(b, app_cmd_class):
+                # do not add the app_cmd_class if one of its subclasses
+                # is already in the list
+                add_cmd_class = False
 
-            # now deal with the option_list, so that prev_cmd_class' options
-            # are not 'forgotten' in cmd_class, and cmd_class' s options are
-            # simply added to the command's option_list
-            cmd_class.option_list = prev_cmd_class.option_list + \
-                tuple(set(cmd_class.option_list). \
-                      difference(prev_cmd_class.option_list))
+        if add_cmd_class:
+            bases.append(app_cmd_class)
 
-        prev_cmd_class = cmd_class
+        for o in app_cmd_class.option_list:
+            o_name = o.get_opt_string()
+            if o_name not in option_list_names:
+                option_list.append(o)
+                option_list_names.append(o_name)
+            else:
+                warn('django-mcmo: Option redefinition in command "%s": --%s, '
+                     'this may lead to unexpected behavior.' % (name, o_name))
 
-    return cmd_class()
+    # easy case => no unnecessary subclassing
+    if len(bases) == 1:
+        return bases[0]()
+
+    # create Command class
+    return type('Command', tuple(bases), {'option_list': option_list})()
 
 core_management.load_command_class = load_command_class
 
