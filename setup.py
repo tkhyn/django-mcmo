@@ -10,7 +10,7 @@ import os
 
 
 # imports __version__ variable
-exec(open('django_mcmo/version.py').read())
+exec(open('mcmo/version.py').read())
 dev_status = __version_info__[3]
 
 if dev_status == 'alpha' and not __version_info__[4]:
@@ -35,7 +35,10 @@ setup(
     keywords=['django', 'management', 'multiple'],
     classifiers=[
         'Programming Language :: Python',
+        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Development Status :: %s' % DEV_STATUS[dev_status],
@@ -46,12 +49,8 @@ setup(
         'Topic :: Utilities'
     ],
     packages=find_packages(),
-    include_package_data=True,
-    package_data={
-        '': ['LICENSE.txt', 'README.rst']
-    },
     install_requires=(
-        'django>=1.6',
+        'django>=1.4',
     ),
     zip_safe=False
 )

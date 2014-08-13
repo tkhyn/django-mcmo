@@ -1,31 +1,19 @@
 syntax: glob
 
-# buildout files and folders
-buildout
+# buildout
+bin
 .installed.cfg
-django_mcmo.egg-info
 
 # setuptools generated files and folders
 build
 dist
 MANIFEST
+*.egg-info
 
-# egg folder (when package is used as a buildout dev egg)
-django-mcmo.egg-info
-
-# eclipse project related files and folders
-.pydevproject
-.project
-.settings
+# tests
+.tox
+.coverage
 
 # python binary files
 *.pyc
-
-# locale binary files
-*.mo
-
-# log files
-*.log
-
-# Windows thumbnails
-**/thumbs.db
+__pycache__
