@@ -2,13 +2,18 @@
 Running dummy command defined in app1 (subclass of NoArgsCommand) and app3
 (subclass of LabelCommand), demonstrating incompatibilities
 
-Calling the 'dummy' command without args should fail when app1 is first in
+Calling the 'dummy' command without args will fail when app1 is first in
 INSTALLED_APPS. app1 command's handle method is indeed not called because
-of MRO (the command class' bases are (app3.Command, app1.Command))
+of MRO (the command class' bases are (app3.Command, app1.Command)). Calling it
+with args will only call the command defined in app3.
 
-Calling the 'dummy' command with args should fail when app3 is first in
+Calling the 'dummy' command with args will fail when app3 is first in
 INSTALLED_APPS. app3 command's handle method is indeed not called because of
-MRO (the final command class' bases are (app1.Command, app3.Command))
+MRO (the final command class' bases are (app1.Command, app3.Command)). Calling
+it without args will only call the command defined in app1.
+
+Calling the 'dummy' command with app1 and app3 in INSTALLED_APPS should raise
+a warning.
 
 This behavior should be changed in future versions. Overriding a command with
 different base classes should not be possible (and actually should never
