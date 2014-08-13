@@ -3,7 +3,7 @@ Monkey-patching django.core.management functions
 """
 
 import os
-import collections
+from collections import defaultdict
 import warnings
 
 from django.core import management as core_management
@@ -23,8 +23,9 @@ _commands = None
 def get_commands():
     global _commands
     if _commands is None:
-        _commands = dict([(name, ['django.core']) for name in \
-            core_management.find_commands(core_management.__path__[0])])
+        _commands = defaultdict(lambda: [])
+        for name in core_management.find_commands(core_management.__path__[0]):
+            _commands[name].append('django.core')
 
         # Find the paths to the management modules
         paths = []
@@ -55,10 +56,7 @@ def get_commands():
 
         for app_name, path in paths:
             for name in core_management.find_commands(path):
-                if name in _commands:
-                    _commands[name].append(app_name)
-                else:
-                    _commands[name] = [app_name]
+                _commands[name].append(app_name)
 
     core_management._commands = _commands
     return _commands
@@ -139,7 +137,7 @@ def main_help_text(self, commands_only=False):
             "",
             "Available subcommands:",
         ]
-        commands_dict = collections.defaultdict(lambda: [])
+        commands_dict = defaultdict(lambda: [])
         for name, apps in six.iteritems(get_commands()):
             for app in apps:
                 if app == 'django.core':
