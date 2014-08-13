@@ -1,13 +1,5 @@
-import os
-
 DEBUG = True
 SECRET_KEY = 'secret'
-
-ROOT_URLCONF = 'tests.urls'
-
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
-
 
 DATABASES = {
     'default': {
@@ -18,9 +10,5 @@ DATABASES = {
 
 INSTALLED_APPS = ['django_mcmo',
                   'django_nose']
-
-MIDDLEWARE_CLASSES = ()
-
-TEMPLATE_DIRS = os.path.join(os.path.dirname('__file__'), 'templates')
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
