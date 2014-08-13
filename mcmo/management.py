@@ -2,15 +2,11 @@
 Monkey-patching django.core.management functions
 """
 
-import os
 from collections import defaultdict
 import warnings
 
-from django.core import management as core_management
-from django.core.management.base import AppCommand, LabelCommand, NoArgsCommand
-from django.core.exceptions import ImproperlyConfigured
-from django.utils import six
-from django.core.management.color import color_style
+from django.core.management import *
+from django.core import management as _core_management
 
 
 class CommandWarning(Warning):
@@ -24,7 +20,7 @@ def get_commands():
     global _commands
     if _commands is None:
         _commands = defaultdict(lambda: [])
-        for name in core_management.find_commands(core_management.__path__[0]):
+        for name in find_commands(_core_management.__path__[0]):
             _commands[name].append('django.core')
 
         # Find the paths to the management modules
@@ -49,19 +45,18 @@ def get_commands():
             # Find and load the management module for each installed app.
             for app_name in apps:
                 try:
-                    paths.append((app_name, core_management
-                                  .find_management_module(app_name)))
+                    paths.append((app_name, find_management_module(app_name)))
                 except ImportError:
                     pass  # No management module - ignore this app
 
         for app_name, path in paths:
-            for name in core_management.find_commands(path):
+            for name in find_commands(path):
                 _commands[name].append(app_name)
 
-    core_management._commands = _commands
+    _core_management._commands = _commands
     return _commands
 
-core_management.get_commands = get_commands
+_core_management.get_commands = get_commands
 
 
 def load_command_class(app_names, name):
@@ -69,7 +64,7 @@ def load_command_class(app_names, name):
     option_list = []
     option_list_names = []
     for app in reversed(app_names):
-        module = core_management.import_module('%s.management.commands.%s' % \
+        module = import_module('%s.management.commands.%s' % \
                                                (app, name))
         # original command class
         app_cmd_class = module.Command
@@ -111,8 +106,8 @@ def load_command_class(app_names, name):
     for b in bases[1:]:
         for c in set(common_bases).difference(b.__mro__):
             common_bases.remove(c)
-    if not any(issubclass(common_bases[0], c)
-               for c in (AppCommand, LabelCommand, NoArgsCommand)):
+    if not any(issubclass(common_bases[0], getattr(_core_management.base, a))
+               for a in ('AppCommand', 'LabelCommand', 'NoArgsCommand')):
         warnings.warn(
              'Command "%s": Possible command classes inheritance conflict in '
              'apps %s. All command classes do not derive from the same django '
@@ -123,7 +118,7 @@ def load_command_class(app_names, name):
     # create Command class
     return type('Command', tuple(bases), {'option_list': option_list})()
 
-core_management.load_command_class = load_command_class
+_core_management.load_command_class = load_command_class
 
 
 def main_help_text(self, commands_only=False):
@@ -153,4 +148,4 @@ def main_help_text(self, commands_only=False):
                 usage.append("    %s" % name)
     return '\n'.join(usage)
 
-core_management.ManagementUtility.main_help_text = main_help_text
+_core_management.ManagementUtility.main_help_text = main_help_text
