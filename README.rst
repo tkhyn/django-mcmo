@@ -18,7 +18,7 @@ Usage
 
 by::
 
-    from django_mcmo import management
+    from mcmo import management
 
 in your manage.py file
 
@@ -32,7 +32,7 @@ Alternative usage
 If your manage.py is automatically generated (e.g. if you are using buildout
 and djangorecipe), simply make sure that the statement::
 
-    import django_mcmo
+    import mcmo
 
 is executed before calling django.management.execute_from_command_line.
 

@@ -5,7 +5,7 @@ from django.utils.datastructures import SortedDict
 from django.core import management as management_core
 from django.utils import six
 
-from django_mcmo import management as management_mcmo
+from mcmo import management as management_mcmo
 
 # nose should not look for tests in this module
 __test__ = False

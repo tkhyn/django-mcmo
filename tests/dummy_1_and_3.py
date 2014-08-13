@@ -24,7 +24,7 @@ import warnings
 
 from django.core.management import CommandError
 
-from django_mcmo.management import CommandWarning
+from mcmo.management import CommandWarning
 
 from .base import TestCase
 

@@ -10,7 +10,7 @@ import os
 
 
 # imports __version__ variable
-exec(open('django_mcmo/version.py').read())
+exec(open('mcmo/version.py').read())
 dev_status = __version_info__[3]
 
 if dev_status == 'alpha' and not __version_info__[4]:
