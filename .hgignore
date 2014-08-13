@@ -11,6 +11,7 @@ MANIFEST
 *.egg-info
 
 # tests
+.tox
 .coverage
 
 # python binary files
