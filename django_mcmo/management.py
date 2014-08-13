@@ -3,12 +3,17 @@ Monkey-patching django.core.management functions
 """
 
 import collections
-from warnings import warn
+import warnings
 
 from django.core import management as core_management
+from django.core.management.base import AppCommand, LabelCommand, NoArgsCommand
 from django.core.exceptions import ImproperlyConfigured
 from django.utils import six
 from django.core.management.color import color_style
+
+
+class CommandWarning(Warning):
+    pass
 
 
 _commands = None
@@ -76,12 +81,29 @@ def load_command_class(app_names, name):
                 option_list.append(o)
                 option_list_names.append(o_name)
             else:
-                warn('django-mcmo: Option redefinition in command "%s": --%s, '
-                     'this may lead to unexpected behavior.' % (name, o_name))
+                warnings.warn(
+                    'django-mcmo: Option redefinition in command "%s": --%s, '
+                    'this may lead to unexpected behavior.' % (name, o_name),
+                    CommandWarning)
 
     # easy case => no unnecessary subclassing
     if len(bases) == 1:
         return bases[0]()
+
+    # check that all bases are subclasses the same Command base class
+    # (NoArgsCommand, LabelCommand or AppCommand)
+    common_bases = list(bases[0].__mro__)
+    for b in bases[1:]:
+        for c in set(common_bases).difference(b.__mro__):
+            common_bases.remove(c)
+    if not any(issubclass(common_bases[0], c)
+               for c in (AppCommand, LabelCommand, NoArgsCommand)):
+        warnings.warn(
+             'Command "%s": Possible command classes inheritance conflict in '
+             'apps %s. All command classes do not derive from the same django '
+             'base class (AppCommand, LabelCommand, NoArgsCommand). This is '
+             'likely to cause inconsistencies.' % (name, repr(app_names)),
+             CommandWarning)
 
     # create Command class
     return type('Command', tuple(bases), {'option_list': option_list})()
