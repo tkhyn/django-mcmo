@@ -2,6 +2,7 @@
 Monkey-patching django.core.management functions
 """
 
+import os
 import collections
 import warnings
 
@@ -25,26 +26,39 @@ def get_commands():
         _commands = dict([(name, ['django.core']) for name in \
             core_management.find_commands(core_management.__path__[0])])
 
-        # Find the installed apps
-        from django.conf import settings
+        # Find the paths to the management modules
+        paths = []
         try:
-            apps = settings.INSTALLED_APPS
-        except ImproperlyConfigured:
-            # Still useful for commands that do not require functional settings
-            # like startproject or help
-            apps = []
+            # django 1.7
+            from django.apps import apps
+            for app_config in apps.get_app_configs():
+                paths.append((app_config.name,
+                              os.path.join(app_config.path, 'management')))
 
-        # Find and load the management module for each installed app.
-        for app_name in apps:
+        except ImportError:
+            # django 1.6
+            from django.conf import settings
             try:
-                path = core_management.find_management_module(app_name)
-                for name in core_management.find_commands(path):
-                    if name in _commands:
-                        _commands[name].append(app_name)
-                    else:
-                        _commands[name] = [app_name]
-            except ImportError:
-                pass  # No management module - ignore this app
+                apps = settings.INSTALLED_APPS
+            except ImproperlyConfigured:
+                # Still useful for commands that do not require functional
+                # settings like startproject or help
+                apps = []
+
+            # Find and load the management module for each installed app.
+            for app_name in apps:
+                try:
+                    paths.append((app_name, core_management
+                                  .find_management_module(app_name)))
+                except ImportError:
+                    pass  # No management module - ignore this app
+
+        for app_name, path in paths:
+            for name in core_management.find_commands(path):
+                if name in _commands:
+                    _commands[name].append(app_name)
+                else:
+                    _commands[name] = [app_name]
 
     core_management._commands = _commands
     return _commands
@@ -63,10 +77,12 @@ def load_command_class(app_names, name):
         app_cmd_class = module.Command
 
         add_cmd_class = True
+        replaces_base = False
         for b in reversed(bases):
             if issubclass(app_cmd_class, b):
                 # remove any base class of app_cmd_class already in the list
                 bases.remove(b)
+                replaces_base = True
             elif issubclass(b, app_cmd_class):
                 # do not add the app_cmd_class if one of its subclasses
                 # is already in the list
@@ -80,10 +96,11 @@ def load_command_class(app_names, name):
             if o_name not in option_list_names:
                 option_list.append(o)
                 option_list_names.append(o_name)
-            else:
+            elif add_cmd_class and not replaces_base:
                 warnings.warn(
-                    'django-mcmo: Option redefinition in command "%s": --%s, '
-                    'this may lead to unexpected behavior.' % (name, o_name),
+                    'django-mcmo: Option redefinition in app "%s" for command '
+                    '"%s": %s, this may lead to unexpected behavior.'
+                    % (app, name, o_name),
                     CommandWarning)
 
     # easy case => no unnecessary subclassing

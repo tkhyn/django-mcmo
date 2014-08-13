@@ -33,8 +33,14 @@ class TestSettingsManager(object):
                                                           k, NO_SETTING))
             setattr(settings, k, v)
         if 'INSTALLED_APPS' in kwargs:
+            management_mcmo._commands = None
+            try:
+                # django 1.7 apps registry
+                from django.apps.registry import apps
+                apps.set_installed_apps(kwargs['INSTALLED_APPS'])
+            except ImportError:
+                pass
             self.syncdb()
-            self.clear_commands()
 
     def syncdb(self):
         loading.cache.loaded = False
@@ -47,9 +53,6 @@ class TestSettingsManager(object):
 
         management_core.call_command('syncdb', verbosity=0)
 
-    def clear_commands(self):
-        management_mcmo._commands = None
-
     def revert(self):
         for k, v in six.iteritems(self._original_settings):
             if v == NO_SETTING:
@@ -57,6 +60,12 @@ class TestSettingsManager(object):
             else:
                 setattr(settings, k, v)
         if 'INSTALLED_APPS' in self._original_settings:
+            try:
+                # django 1.7 apps registry
+                from django.apps.registry import apps
+                apps.unset_installed_apps()
+            except ImportError:
+                pass
             self.syncdb()
         self._original_settings = {}
 

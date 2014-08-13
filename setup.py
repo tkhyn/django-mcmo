@@ -38,6 +38,7 @@ setup(
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Development Status :: %s' % DEV_STATUS[dev_status],
@@ -49,7 +50,7 @@ setup(
     ],
     packages=find_packages(),
     install_requires=(
-        'django>=1.6',
+        'django>=1.4',
     ),
     zip_safe=False
 )

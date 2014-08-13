@@ -11,4 +11,6 @@ DATABASES = {
 INSTALLED_APPS = ['django_mcmo',
                   'django_nose']
 
+MIDDLEWARE_CLASSES = ()  # Django 1.7 needs that to be happy :)
+
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
