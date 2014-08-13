@@ -3,6 +3,7 @@ from django.conf import settings
 from django.db.models import loading
 from django.utils.datastructures import SortedDict
 from django.core import management as management_core
+from django.utils import six
 
 from django_mcmo import management as management_mcmo
 
@@ -27,7 +28,7 @@ class TestSettingsManager(object):
         self._original_settings = {}
 
     def set(self, **kwargs):
-        for k, v in kwargs.iteritems():
+        for k, v in six.iteritems(kwargs):
             self._original_settings.setdefault(k, getattr(settings,
                                                           k, NO_SETTING))
             setattr(settings, k, v)
@@ -50,7 +51,7 @@ class TestSettingsManager(object):
         management_mcmo._commands = None
 
     def revert(self):
-        for k, v in self._original_settings.iteritems():
+        for k, v in six.iteritems(self._original_settings):
             if v == NO_SETTING:
                 delattr(settings, k)
             else:

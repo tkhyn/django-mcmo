@@ -27,7 +27,6 @@ from .base import TestCase
 # this enables the use of assertRaises, and enables the warning to be
 # raised multiple times (as the same warning cannot be raised twice, and
 # erasing the warnings registry is not possible)
-warnings.filterwarnings('error', category=CommandWarning)
 
 
 class DummyOverrideTests(TestCase):
@@ -40,12 +39,12 @@ class DummyOverrideTests(TestCase):
                         in str(w[0].message))
 
     def call_command(self, *args):
+        warnings.filterwarnings('error', category=CommandWarning)
         with self.assertRaises(CommandWarning):
             try:
                 super(DummyOverrideTests, self).call_command(*args)
-            except CommandError:
-                # ignore subsequent command errors
-                pass
+            finally:
+                warnings.resetwarnings()
 
     def test_called_without_args(self):
         self.call_command('dummy')

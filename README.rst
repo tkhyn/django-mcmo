@@ -6,6 +6,7 @@ django-mcmo
 MCMO stands for 'Management Command Multiple Override'
 Allows multiple apps to override the same management command in Django
 
+Compatible with Django 1.4 to 1.6 and matching Python 2 and 3 versions.
 
 Usage
 -----
