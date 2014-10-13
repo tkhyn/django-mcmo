@@ -62,16 +62,16 @@ least from on of Django's base command classes (``AppCommand``,
 ``django-mcmo`` will raise a warning (but the execution will carry on) in case
 of subclassing inconsistencies. For example, if the command ``cmd`` in ``app1``
 inherits from ``AppCommand`` and the command ``cmd`` in ``app2`` inherits from
-``NoArgsCommand``. Indeed, as only one command is likely to be executed, the
-obtained results may not be consistent, depend on the relative position of the
-apps in ``INSTALLED_APPS``, or raise an exception regarding arguments presence,
-absence or type.
+``NoArgsCommand``. Indeed, as only one command is likely to be executed in that
+situation, the obtained results may not be consistent as it will depend on the
+relative position of the apps in ``INSTALLED_APPS`` or raise an exception
+regarding arguments presence, absence or type.
 
 In practice, same-name commands will only be met when two 3rd party apps
 override a Django core management command. They will therefore derive from the
 same Command base class, and cause no issue in 99.9% of the cases.
 
-``django-mcmo`` may also emmit warning messages if the same option is
+``django-mcmo`` may also emit warning messages if the same option is
 explicitly added in the same command of two distinct apps with command classes
 not being subclasses of each other.
 
