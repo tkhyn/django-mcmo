@@ -61,7 +61,7 @@ _core_management.get_commands = get_commands
 
 def load_command_class(app_names, name):
     bases = []
-    option_list = []
+    all_options = set([])
     option_list_names = []
     for app in reversed(app_names):
         module = import_module('%s.management.commands.%s' % \
@@ -84,10 +84,16 @@ def load_command_class(app_names, name):
         if add_cmd_class:
             bases.append(app_cmd_class)
 
-        for o in app_cmd_class.option_list:
+        # the set of options that this command actually adds to the base
+        # command(s)
+        own_options = set(app_cmd_class.option_list)
+        all_options.update(own_options)
+        for b in app_cmd_class.__bases__:
+            own_options.difference_update(b.option_list)
+
+        for o in own_options:
             o_name = o.get_opt_string()
             if o_name not in option_list_names:
-                option_list.append(o)
                 option_list_names.append(o_name)
             elif add_cmd_class and not replaces_base:
                 warnings.warn(
@@ -100,7 +106,7 @@ def load_command_class(app_names, name):
     if len(bases) == 1:
         return bases[0]()
 
-    # check that all bases are subclasses the same Command base class
+    # check that all bases are subclasses of the same Command base class
     # (NoArgsCommand, LabelCommand or AppCommand)
     common_bases = list(bases[0].__mro__)
     for b in bases[1:]:
@@ -116,7 +122,7 @@ def load_command_class(app_names, name):
              CommandWarning)
 
     # create Command class
-    return type('Command', tuple(bases), {'option_list': option_list})()
+    return type('Command', tuple(bases), {'option_list': tuple(all_options)})()
 
 _core_management.load_command_class = load_command_class
 
