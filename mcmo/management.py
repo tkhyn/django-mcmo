@@ -116,7 +116,7 @@ def load_command_class(app_names, name):
              CommandWarning)
 
     # create Command class
-    return type('Command', tuple(bases), {'option_list': option_list})()
+    return type('Command', tuple(bases), {'option_list': tuple(option_list)})()
 
 _core_management.load_command_class = load_command_class
 
