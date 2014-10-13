@@ -22,8 +22,6 @@ happen).
 
 import warnings
 
-from django.core.management import CommandError
-
 from mcmo.management import CommandWarning
 
 from .base import TestCase
@@ -37,11 +35,6 @@ from .base import TestCase
 class DummyOverrideTests(TestCase):
 
     __test__ = False
-
-    def check_warning(self, w):
-        self.assertEqual(len(w), 1)
-        self.assertTrue('Possible command classes inheritance conflict'
-                        in str(w[0].message))
 
     def call_command(self, *args):
         warnings.filterwarnings('error', category=CommandWarning)
