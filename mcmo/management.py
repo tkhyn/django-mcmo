@@ -112,8 +112,11 @@ def load_command_class(app_names, name):
     for b in bases[1:]:
         for c in set(common_bases).difference(b.__mro__):
             common_bases.remove(c)
-    if not any(issubclass(common_bases[0], getattr(_core_management.base, a))
-               for a in ('AppCommand', 'LabelCommand', 'NoArgsCommand')):
+
+    if common_bases[0] == _core_management.BaseCommand:
+        # the common base is the BaseCommand class. That means that there is
+        # probably a command class inheritance conflict, as no command class
+        # should directly inherit from BaseCommand
         warnings.warn(
              'Command "%s": Possible command classes inheritance conflict in '
              'apps %s. All command classes do not derive from the same django '

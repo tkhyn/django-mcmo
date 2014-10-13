@@ -13,5 +13,5 @@ class Command(BaseCommand):
     option_list = (make_option('--dummy_base-zero', action='store_true',
                                help="App0 dummy command option"),)
 
-    def handle_noargs(self, **options):
+    def handle(self, *args, **options):
         pass
