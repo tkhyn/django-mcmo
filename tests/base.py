@@ -1,4 +1,5 @@
-from django.utils import unittest
+import django
+from django import test
 from django.conf import settings
 from django.db.models import loading
 from django.utils.datastructures import SortedDict
@@ -70,7 +71,7 @@ class TestSettingsManager(object):
         self._original_settings = {}
 
 
-class TestCase(unittest.TestCase):
+class TestCase(test.TestCase):
     """
     A subclass of the Django TestCase with a settings_manager
     attribute which is an instance of TestSettingsManager.
@@ -83,7 +84,10 @@ class TestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls._apps = ['tests.%s' % a for a in ('app0',) + cls.apps]
+        apps = ['tests.%s' % a for a in cls.apps + ('app0',)]
+        if django.VERSION < (1, 7):
+            apps.reverse()
+        cls._apps = apps
         cls.settings_manager = TestSettingsManager()
         cls.settings_manager.set(
             INSTALLED_APPS=settings.INSTALLED_APPS + cls._apps)

@@ -28,7 +28,7 @@ def get_commands():
         try:
             # django 1.7
             from django.apps import apps
-            for app_config in apps.get_app_configs():
+            for app_config in reversed(list(apps.get_app_configs())):
                 paths.append((app_config.name,
                               os.path.join(app_config.path, 'management')))
 

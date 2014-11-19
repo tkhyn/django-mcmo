@@ -12,7 +12,7 @@ from .base import TestCase
 
 class DummyBaseTests(TestCase):
 
-    apps = ('app1', 'app2')
+    apps = ('app2', 'app1')
 
     def call_command(self, *args):
         # the command should not raise any warning

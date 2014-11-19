@@ -23,7 +23,7 @@ def handle_noargs(cmd_class, out):
 
 class DummyOverrideTests(TestCase):
 
-    apps = ('app1', 'app2')
+    apps = ('app2', 'app1')
 
     def test_options(self):
         self.assertInOptions('dummy', '--dummy-zero')

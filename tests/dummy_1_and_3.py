@@ -53,9 +53,9 @@ class DummyOverrideTests(TestCase):
 
 class DummyOverrideTests13(DummyOverrideTests):
     __test__ = True
-    apps = ('app1', 'app3')
+    apps = ('app3', 'app1')
 
 
 class DummyOverrideTests31(DummyOverrideTests):
     __test__ = True
-    apps = ('app3', 'app1')
+    apps = ('app1', 'app3')
