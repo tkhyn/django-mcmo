@@ -46,7 +46,7 @@ class TestSettingsManager(object):
     def syncdb(self):
         loading.cache.loaded = False
         loading.cache.app_store = SortedDict()
-        loading.cache.handled = set()
+        loading.cache.handled = {} if django.VERSION < (1, 6) else set()
         loading.cache.postponed = []
         loading.cache.nesting_level = 0
         loading.cache._get_models_cache = {}
