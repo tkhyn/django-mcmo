@@ -1,6 +1,19 @@
 django-mcmo - changes
 =====================
 
+2.1.1 (20-11-2014)
+------------------
+
+- Taking into account Django 1.7's reverse order when parsing apps
+
+
+2.1 (13-10-2014)
+----------------
+
+Fixed:
+- option_list is now a tuple instead of a list
+- duplicate option detection is now more reliable
+- inheritance conflict detection is more flexible
 
 2.0 (13-08-2014)
 ----------------
