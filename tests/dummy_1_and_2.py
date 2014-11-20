@@ -5,7 +5,7 @@ Everything should work and both handle_noargs functions should be called
 
 from mock import patch
 
-from .base import TestCase
+from ._base import TestCase
 
 from tests.app1.management.commands.dummy import Command as Command_1
 from tests.app2.management.commands.dummy import Command as Command_2

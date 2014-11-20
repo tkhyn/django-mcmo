@@ -7,7 +7,7 @@ import warnings
 
 from mcmo.management import CommandWarning
 
-from .base import TestCase
+from ._base import TestCase
 
 
 class DummyBaseTests(TestCase):

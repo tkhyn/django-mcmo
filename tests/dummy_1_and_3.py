@@ -24,7 +24,7 @@ import warnings
 
 from mcmo.management import CommandWarning
 
-from .base import TestCase
+from ._base import TestCase
 
 # CommandWarning is converted to a catchable Exception
 # this enables the use of assertRaises, and enables the warning to be
