@@ -1,12 +1,14 @@
 import django
 from django import test
 from django.conf import settings
-from django.db.models import loading
 from django.utils.datastructures import SortedDict
 from django.core import management as management_core
 from django.utils import six
 
 from mcmo import management as management_mcmo
+
+from ._compat import apps, cache_handled_init
+
 
 # nose should not look for tests in this module
 __test__ = False
@@ -29,28 +31,28 @@ class TestSettingsManager(object):
         self._original_settings = {}
 
     def set(self, **kwargs):
+        if not apps.app_configs:
+            apps.populate(settings.INSTALLED_APPS)
+
         for k, v in six.iteritems(kwargs):
             self._original_settings.setdefault(k, getattr(settings,
                                                           k, NO_SETTING))
             setattr(settings, k, v)
+
         if 'INSTALLED_APPS' in kwargs:
             management_mcmo._commands = None
-            try:
-                # django 1.7 apps registry
-                from django.apps.registry import apps
-                apps.set_installed_apps(kwargs['INSTALLED_APPS'])
-            except ImportError:
-                pass
+            apps.set_installed_apps(kwargs['INSTALLED_APPS'])
             self.syncdb()
 
     def syncdb(self):
-        loading.cache.loaded = False
-        loading.cache.app_store = SortedDict()
-        loading.cache.handled = {} if django.VERSION < (1, 6) else set()
-        loading.cache.postponed = []
-        loading.cache.nesting_level = 0
-        loading.cache._get_models_cache = {}
-        loading.cache.available_apps = None
+        apps.loaded = False
+        apps.app_labels = {}
+        apps.app_store = SortedDict()
+        apps.handled = cache_handled_init()
+        apps.postponed = []
+        apps.nesting_level = 0
+        apps._get_models_cache = {}
+        apps.available_apps = None
 
         management_core.call_command('syncdb', verbosity=0)
 
@@ -60,14 +62,11 @@ class TestSettingsManager(object):
                 delattr(settings, k)
             else:
                 setattr(settings, k, v)
+
         if 'INSTALLED_APPS' in self._original_settings:
-            try:
-                # django 1.7 apps registry
-                from django.apps.registry import apps
-                apps.unset_installed_apps()
-            except ImportError:
-                pass
+            apps.unset_installed_apps()
             self.syncdb()
+
         self._original_settings = {}
 
 

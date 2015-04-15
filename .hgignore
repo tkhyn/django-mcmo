@@ -3,6 +3,7 @@ syntax: glob
 # buildout
 bin
 .installed.cfg
+.mr.developer.cfg
 
 # setuptools generated files and folders
 build
